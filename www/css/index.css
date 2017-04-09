@@ -1,0 +1,162 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+div#fullpage {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+    .app {
+        background-position:left center;
+        padding:75px 0px 75px 170px;  /* padding-top + padding-bottom + text area = image height */
+        margin:-90px 0px 0px -198px;  /* offset vertical: half of image height */
+                                      /* offset horizontal: half of image width and text area width */
+    }
+}
+
+h1 {
+    font-size:24px;
+    font-weight:normal;
+    margin:0px;
+    overflow:visible;
+    padding:0px;
+    text-align:center;
+}
+
+
+@keyframes fade {
+    from { opacity: 1.0; }
+    50% { opacity: 0.4; }
+    to { opacity: 1.0; }
+}
+ 
+@-webkit-keyframes fade {
+    from { opacity: 1.0; }
+    50% { opacity: 0.4; }
+    to { opacity: 1.0; }
+}
+ 
+.blink {
+    animation:fade 3000ms infinite;
+    -webkit-animation:fade 3000ms infinite;
+}
+
+
+.hidden { display: none !important; visibility: hidden; }
+
+div.wait, img.wait { padding-bottom: 5px; width: 20px; height: 20px; }
+
+div.errorBox { opacity: 0; margin-bottom: 30px; }
+
+.errorBox table { font-size: 16px; margin: 20px auto; color: #9d0020; }
+.errorBox td { text-align: center; }
+
+div.resultBox { opacity: 0; margin-bottom: 30px; }
+.resultBox table { margin: 20px auto; }
+.resultBox td { text-align: center; }
+
+.resultBox td.stopTime
+{
+	color: #000;
+	font-size: 1em;
+	padding: 3px 10px;
+}
+
+.resultBox td.timeLabel
+{
+	color: #000;
+	font-size: 12px;
+	padding-top: 10px;
+}
+
+h2 { text-shadow: 1px 1px 0px #000; }
+
+table.routeBox { margin: 3px 3px 7px 3px; }
+table.routeBox td { padding: 1px; vertical-align: middle; }
+table.routeBox tr.closer td { padding-top: 0px; }
+
+p.stopLabel, p.stopCancelledLabel
+{
+	color: #555;
+	font-size: 10px;
+	padding: 0;
+	margin-top: -5px;
+}
+
+p.stopCancelledLabel
+{
+	color: #9f0020;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3 { page-break-after: avoid; }
+
+h1, h2
+{
+	margin-left: auto; margin-right: auto;
+	text-align: center;
+	color: #091636;
+	border-bottom: 2px solid #2d3437;
+	text-shadow: 0px 0px 0px #000;
+}
+
+/*select
+{
+	width:100%;
+	background-color: #CCC;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border: none;
+    text-align: left;
+}*/
+
+/*option.displayNone
+{
+	display:none;
+}
+
+select.seleccion
+{
+    font-size: medium;
+	margin-bottom : 10px;
+}*/
+
+/*select#MainMobileContent_stopList
+{
+    -webkit-appearance: none;
+    font-size: 10px;
+}*/

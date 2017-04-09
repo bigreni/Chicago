@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+<link rel="stylesheet" type="text/css" href="css/index.css" />
+<!-- Include jQuery Mobile stylesheets -->
+<!--<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">-->
+<!-- Include the jQuery library -->
+<script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+<!-- Include the jQuery Mobile library -->
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<title>GBT Arrivals</title>
+</head>
+<body>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/admob.js"></script>
+	<script type="text/javascript" src="js/jsrender.min.js"></script>
+	<script type="text/javascript" src="js/jquery.cookie.js"></script>    <div id="fullpage" data-role="page">
+		<div id="contentBox" class="box">
+			<h1>Pace Live Arrival Times</h1>
+            			<table class="routeBox">
+				<tr>
+					<td colspan="2">Route:</td>
+                </tr>
+                <tr>
+					<td><select id="MainMobileContent_routeList" class="dropList" style="width:80vw;"></select>
+                    </td>
+					<td>
+                        <div class="wait">
+                            <img id="routeWait" class="hidden wait" src="img/wait.gif" alt="Please wait"/>
+                        </div>
+                    </td>
+				</tr>
+				<tr>
+					<td colspan="2">Direction:</td>
+				</tr>
+                <tr>
+                    <td>
+                        <select id="MainMobileContent_directionList" class="dropList"  style="width:80vw;"></select>
+                    </td>
+					<td>
+                        <div class="wait">
+                            <img id="directionWait" class="hidden wait" src="img/wait.gif" alt="Please wait"/>
+                        </div>
+                    </td>
+				</tr>
+				<tr>
+					<td colspan="2">Stop:</td>
+				</tr>
+                <tr>
+                    <td>
+                        <select id="MainMobileContent_stopList" class="dropList" style="width:80vw"></select>
+                    </td>
+					<td>
+                        <div class="wait">
+                            <img id="stopWait" class="hidden wait" src="img/wait.gif" alt="Please wait"/>
+                        </div>
+                    </td>
+				</tr>
+			</table>
+            
+
+			<!--<table class="routeBox" style="width: 100vw;">
+				<tr>
+					<td colspan="2">Route:</td>
+                </tr>
+            <tr>
+    	        <td>
+                    <div>
+                        <select id="MainMobileContent_routeList" class="seleccion">
+                        </select>
+                    </div>
+                </td>
+					<td><div class="wait"><img id="routeWait" class="hidden wait" src="img/circle.gif" alt="Please wait"/></div></td>
+				</tr>
+				<tr>
+					<td colspan="2">Direction:</td>
+				</tr>	
+                <tr>
+                    	<td><select id="MainMobileContent_directionList" class="seleccion">
+                            </select>
+                        </td>
+					<td><div class="wait"><img id="directionWait" class="hidden wait" src="img/circle.gif" alt="Please wait"/></div></td>
+				</tr>
+
+				<tr>
+					<td colspan="2">Stop:</td>
+				</tr>
+                <tr>
+                    <td><select id="MainMobileContent_stopList" class="seleccion">
+                        </select>
+                    </td>
+					<td><div class="wait"><img id="stopWait" class="hidden wait" src="img/circle.gif" alt="Please wait"/></div></td>
+				</tr>
+			</table>-->
+		</div>
+	<!-- Templates for stop times-->
+	<script id="errorTemplate" type="text/x-jquery-tmpl">
+		<div id="resultBox" class="errorBox"><table><tr><td>{{:error}}</td></tr></table></div>
+	</script>	<script id="stopTemplate" type="text/x-jquery-tmpl">
+		<div id="resultBox" class="resultBox">
+			<h2>{{:heading}}</h2>
+			<table>
+				{{for stops[0].crossings}}
+					<tr>
+						<td class="stopTime">
+							{{if predTime}}
+								{{if countdown}} 
+									{{:countdown}}
+								{{else}}
+									{{:predTime}} {{:predPeriod}}
+								{{/if}}
+								{{if #parent.parent.parent.data.showScheduled == true}}
+									<p class="stopLabel">Scheduled at {{:schedTime}} {{:schedPeriod}}</p>
+								{{/if}}
+							{{else}}
+								{{:schedTime}} {{:schedPeriod}}
+								{{if cancelled}}
+									<p class="stopCancelledLabel">Cancelled</p>
+								{{else}}
+									<p class="stopLabel">Scheduled time shown</p>
+								{{/if}}
+							{{/if}}
+						</td>
+						{{if destination}}
+							<td class="stopTime">{{:destination}}</td>
+						{{/if}}
+					</tr>
+				{{/for}}
+				<tr>
+					<td class="timeLabel" colspan="2">Last updated at {{:updateTime}} {{:updatePeriod}}</td>
+				</tr>
+			</table>
+		</div>
+	</script>
+</div>
+    	
+	<script	type="text/javascript">
+
+		$(document).ready(function() {
+			TransitMaster.StopTimes({arrivals: false, headingLabel: "Departure" });
+		});
+	</script>
+</body>
+</html>
