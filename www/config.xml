@@ -6,7 +6,7 @@ versionCode = "1"
 xmlns="http://www.w3.org/ns/widgets"
 xmlns:gap="http://phonegap.com/ns/1.0"
 >
-    <name>GBT Bus Tracker</name>
+    <name>Pace Bus Tracker</name>
     <description>
         Bus App.
     </description>
