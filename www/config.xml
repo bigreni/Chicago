@@ -6,7 +6,7 @@ versionCode = "1"
 xmlns="http://www.w3.org/ns/widgets"
 xmlns:gap="http://phonegap.com/ns/1.0"
 >
-    <name>Pace Bus Tracker</name>
+    <name>Chicago CTA Bus Tracker</name>
     <description>
         Bus App.
     </description>
@@ -23,20 +23,23 @@ xmlns:gap="http://phonegap.com/ns/1.0"
     <preference name="webviewbounce" value="true" />
     <preference name="prerendered-icon" value="true" />
     <preference name="stay-in-webview" value="false" />
-    <preference name="ios-statusbarstyle" value="black-opaque" />
+    <preference name="ios-statusbarstyle" value="black" />
     <preference name="detect-data-types" value="true" />
     <preference name="exit-on-suspend" value="false" />
-    <preference name="show-splash-screen-spinner" value="true" />
+    <preference name="SplashScreenDelay" value="0"/>
     <preference name="auto-hide-splash-screen" value="true" />
     <preference name="disable-cursor" value="false" />
     <preference name="android-minSdkVersion" value="14" />
     <preference name="android-installLocation" value="auto" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <gap:plugin name="cordova-plugin-statusbar" source="npm"/>
     <gap:plugin name="cordova-plugin-device" source="npm" />
     <gap:plugin name="cordova-plugin-device-motion" source="npm"/>
     <gap:plugin name="cordova-plugin-geolocation" source="npm"/>
     <gap:plugin name="cordova-plugin-whitelist" source="npm"/>
     <gap:plugin name="cordova-plugin-dialogs" source="npm"/>
     <gap:plugin name="cordova-plugin-apprate" source="npm"/>
+    <gap:plugin name="cordova-plugin-google-analytics" source="npm"/>
     <allow-navigation href="http://*/*" />
     <allow-navigation href="https://*/*" />
     <allow-navigation href="data:*" />
@@ -47,10 +50,16 @@ xmlns:gap="http://phonegap.com/ns/1.0"
     <icon gap:platform="android" gap:qualifier="xhdpi" src="res/icon/android/Icon-96.png" />
     <icon gap:platform="blackberry" src="res/icon/blackberry/icon-80.png" />
     <icon gap:platform="blackberry" gap:state="hover" src="res/icon/blackberry/icon-80.png" />
-    <icon gap:platform="ios" height="57" src="res/icon/ios/icon-57.png" width="57" />
-    <icon gap:platform="ios" height="72" src="res/icon/ios/icon-72.png" width="72" />
-    <icon gap:platform="ios" height="114" src="res/icon/ios/icon-57-2x.png" width="114" />
-    <icon gap:platform="ios" height="144" src="res/icon/ios/icon-72-2x.png" width="144" />
+    <icon gap:platform="ios" height="57" src="res/icon/ios/Icon57.png" width="57" />
+    <icon gap:platform="ios" height="72" src="res/icon/ios/Icon72.png" width="72" />
+    <icon gap:platform="ios" height="114" src="res/icon/ios/Icon114.png" width="114" />
+    <icon gap:platform="ios" height="144" src="res/icon/ios/Icon144.png" width="144" />
+    <icon gap:platform="ios" height="120" src="res/icon/ios/Icon120.png" width="120" />
+    <icon gap:platform="ios" height="76" src="res/icon/ios/Icon76.png" width="76" />
+    <icon gap:platform="ios" height="152" src="res/icon/ios/Icon152.png" width="152" />
+    <icon gap:platform="ios" height="50" src="res/icon/ios/Icon50.png" width="50" />
+    <icon gap:platform="ios" height="40" src="res/icon/ios/Icon40.png" width="40" />
+    <icon gap:platform="ios" height="100" src="res/icon/ios/Icon100.png" width="100" />
     <icon gap:platform="webos" src="res/icon/webos/icon-64.png" />
     <icon gap:platform="winphone" src="res/icon/windows-phone/icon-48.png" />
     <icon gap:platform="winphone" gap:role="background" src="res/icon/windows-phone/icon-173-tile.png" />

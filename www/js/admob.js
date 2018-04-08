@@ -9,17 +9,18 @@
     if (/(android)/i.test(navigator.userAgent)) {
         admobid = { // for Android
             banner: 'ca-app-pub-1683858134373419/7790106682',
-            interstitial:'ca-app-pub-9249695405712287/7962159153'
-            //banner: 'ca-app-pub-3886850395157773/3411786244'
-            //interstitial: 'ca-app-pub-9249695405712287/3301233156'
+            interstitial:'ca-app-pub-9249695405712287/3416685158'
         };
-    }
+    } else if(/(ipod|iphone|ipad)/i.test(navigator.userAgent)) { // for ios
+    admobid = {
+      banner: 'ca-app-pub-1683858134373419/7790106682', 
+      interstitial: 'ca-app-pub-9249695405712287/1066062756'
+    };
+  }
 
     function initApp() {
         if (!AdMob) { alert('admob plugin not ready'); return; }
         initAd();
-        // display the banner at startup
-        //createSelectedBanner();
         //display interstitial at startup
         loadInterstitial();
     }
@@ -36,12 +37,14 @@
     function registerAdEvents() {
         // new events, with variable to differentiate: adNetwork, adType, adEvent
         document.addEventListener('onAdFailLoad', function (data) {
-
+            document.getElementById('screen').style.display = 'none';     
         });
         document.addEventListener('onAdLoaded', function (data) { });
         document.addEventListener('onAdPresent', function (data) { });
         document.addEventListener('onAdLeaveApp', function (data) { });
-        document.addEventListener('onAdDismiss', function (data) { });
+        document.addEventListener('onAdDismiss', function (data) { 
+            document.getElementById('screen').style.display = 'none';     
+        });
     }
 
     function createSelectedBanner() {
@@ -54,8 +57,12 @@
 
    function checkFirstUse()
     {
-		TransitMaster.StopTimes({arrivals: true, headingLabel: "Arrival"});        askRating();
-        initApp();
+        //window.ga.startTrackerWithId('UA-88579601-10', 1, function(msg) {
+        //    window.ga.trackView('Home');
+        //});  
+        //initApp();
+        //askRating();
+        document.getElementById('screen').style.display = 'none';     
     }
 
 function askRating()
@@ -66,12 +73,214 @@ function askRating()
   usesUntilPrompt: 10,
   promptAgainForEachNewVersion: true,
   storeAppURL: {
+                ios: '1225698349',
                 android: 'market://details?id=com.chicago.free'
                }
 };
  
 AppRate.promptForRating(false);
 }
+
+function loadFaves()
+{
+    window.location = "Favorites.html";
+    window.ga.trackView('Favorites');
+}
+
+    function getDirections() {
+        reset();
+
+        var url = "http://www.ctabustracker.com/bustime/map/getDirectionsStopsForRoute.jsp?route=" + $("#MainMobileContent_routeList").val();
+		$.get(url, function(data) {processXmlDocumentDirections(data); });
+        $("span").remove();
+        $(".dropList").select2();
+    }
+
+    function processXmlDocumentDirections(xml)
+	{
+        var list = $("#MainMobileContent_routeList");
+
+			var routeTag = xml.getElementsByTagName("route");
+			var directionsTag = routeTag[0].getElementsByTagName("directions");	
+			var directionTag = directionsTag[0].getElementsByTagName("direction");
+			var stopsTag = null;
+			if(directionTag.length > 0)											//@12
+				stopsTag = directionTag[0].getElementsByTagName("stops");
+
+			var directions = [];
+
+			for (var i=0; i<directionTag.length;i++)
+			{
+				var nameTag = directionTag[i].getElementsByTagName("name");
+				var displayTag = directionTag[i].getElementsByTagName("dd");
+				var rtpiFeedName = cd.Utils.getElementData(directionTag[i], "rtpiFeedName"); //@24
+				var direction = nameTag[0].firstChild.data;
+				var directionDisplay = displayTag[0].firstChild.data;
+
+				var direction = new cd.Direction(direction, rtpiFeedName, directionDisplay); //@24
+				directions.push(direction);
+			}
+			setDirections(directions);        }
+
+function setDirections(directions)
+	{
+		g_directions = {};
+		
+        var list = $("#MainMobileContent_routeList");
+        $(list).empty();
+        $(list).get(0).options[$(list).get(0).options.length] = new Option("Select a direction...", "");
+        
+		for (var i=0; i<directions.length; i++)
+		{
+			var direction = directions[i];
+
+			g_directions[ direction.toFeedColonNameString() ] = direction;
+
+			var option = new Option(direction.getDisplayDirection(), direction.toFeedColonNameString()); //@25
+			$(list).append(option);
+		}
+	}
+
+    function getStops() {
+        // Clear cookies if	this is	a new selection
+        if (!initialView)
+            $.cookie("stop", null);
+
+        var list = $("#MainMobileContent_stopList");
+
+        $(list).get(0).options.length = 0;
+        $("#MainMobileContent_stopList").text("Loading stops...");
+        $("#stopWait").removeClass("hidden");
+
+        $.ajax({
+            type: "POST",
+            url: "http://www.nextconnect.riderta.com/Arrivals.aspx/getStops",
+            data: "{routeID: " + $("#MainMobileContent_routeList").val() + ",	directionID: " + $("#MainMobileContent_directionList").val() + "}",
+            contentType: "application/json;	charset=utf-8",
+            dataType: "json",
+            success: function (msg) {
+                if (msg.d == null || msg.d.length == 0) {
+                    $("#MainMobileContent_stopList").text("No stops	found");
+                    displayError("RTA is currently having issues with real-time arrivals. We are working on fixing the issue. Thank you for your patience.");
+                    return;
+                }
+                $(list).empty();
+                $(list).get(0).options[$(list).get(0).options.length] = new Option("Select a stop...", "");
+
+                $.each(msg.d, function (index, item) {
+                    $(list).append($("<option />").val(item.id).text(item.name));
+                    //$(list).get(0).options[$(list).get(0).options.length] = new Option(item.name, item.id);
+                });
+
+                checkListCookie("stop", "MainMobileContent_stopList");
+
+                initialView = false;
+            },
+            error: function () {
+                $("#MainMobileContent_stopList").text("Failed to load stops");
+            },
+            complete: function (jqXHR, textStatus) {
+                $("#stopWait").addClass("hidden");
+            }
+        });
+        $("span").remove();
+        $(".dropList").select2();
+    }
+
+    function getArrivalTimes(refresh) {
+        if (!refresh) {
+            reset(true);
+            $("#stopWait").removeClass("hidden");
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "http://www.nextconnect.riderta.com/Arrivals.aspx/getStopTimes",
+            data: "{routeID: " + $("#MainMobileContent_routeList").val() + ",	directionID: " + $("#MainMobileContent_directionList").val() + ",	stopID:	" + $("#MainMobileContent_stopList").val() + ", useArrivalTimes:	" + settings.arrivals + "}",
+            contentType: "application/json;	charset=utf-8",
+            dataType: "json",
+            success: function (msg) {
+                if (msg.d == null) {
+                    msg.d = { errorMessage: "RTA is currently having issues with real-time arrivals. We are working on fixing the issue. Thank you for your patience." };
+                }
+
+                if (msg.d.errorMessage == null && (msg.d.stops == null || msg.d.stops[0].crossings == null || msg.d.stops[0].crossings.length == 0))
+                    msg.d.errorMessage = "No upcoming stop times found";
+
+                if (msg.d.errorMessage != null) {
+                    displayError(msg.d.errorMessage);
+                    return;
+                }
+
+                var count = msg.d.stops[0].crossings.length;
+                msg.d.heading = "Next " + (count > 1 ? count : "") + " Vehicle " + settings.headingLabel + (count > 1 ? "s" : "");
+
+                var result = $("#stopTemplate").render(msg.d);
+
+                if (refresh)
+                    $("#resultBox").html($(result).html());
+                else
+                    displayResultsBox(result);
+
+                if (!refresh)
+                    timer = window.setInterval(function () {
+                        getArrivalTimes(true);
+                    }, 30000);
+            },
+            error: function () {
+                displayError("Failed to	load stop times");
+            },
+            complete: function (jqXHR, textStatus) {
+                $("#stopWait").addClass("hidden");
+            }
+        });
+        $("span").remove();
+        $(".dropList").select2();
+    }
+
+    function displayError(error) {
+        reset(true);
+        displayResultsBox($("#errorTemplate").render({ error: error }));
+    }
+
+    function displayResultsBox(html) {
+        // Unfortunately IE9 leaves	artifacts
+        var radius = $("#contentBox").css("border-radius");
+
+        $(html).hide().appendTo("#contentBox").toggle(500, function () {
+            $("#contentBox").css("border-radius", radius);
+            $(this).animate({ opacity: "1" }, 200);
+        });
+    }
+
+    function reset(instantRemove) {
+        if (timer != null) {
+            window.clearInterval(timer);
+            timer = null;
+        }
+
+        if ($("#resultBox").length > 0) {
+            if (instantRemove)
+                $("#resultBox").remove();
+            else
+                removeResultBox();
+        }
+    }
+
+    function removeResultBox() {
+        // Unfortunately IE9 leaves	artifacts
+        var shadow = $("#contentBox").css("box-shadow");
+        var shadowHide = shadow;
+
+        $("#resultBox").animate({ opacity: "0" }, 200, function () {
+            $("#contentBox").css("box-shadow", shadowHide);
+            $(this).toggle(500, function () {
+                $("#contentBox").css("box-shadow", shadow);
+                $(this).remove();
+            })
+        });
+    }
+
 
 var	TransitMaster =	TransitMaster || {};
 
@@ -81,6 +290,7 @@ TransitMaster.StopTimes = function (options) {
 
     var timer = null;
     var initialView = true;
+    $('#simplemenu').sidr();
 
     initialize();
 
@@ -135,237 +345,8 @@ TransitMaster.StopTimes = function (options) {
         return false;
     }
 
-    function getRoutes() {
-        $("#routeWait").removeClass("hidden");
-
-        $.ajax({
-            type: "POST",
-            url: "http://tmweb.pacebus.com/TMWebWatch/Arrivals.aspx/getRoutes",
-            contentType: "application/json;	charset=utf-8",
-            dataType: "json",
-            success: function (msg) {
-                if (msg.d == null || msg.d.length == 0) {
-                    $("#MainMobileContent_routeList").text("No routes found");
-                    return; 
-                }
-
-                var list = $("#MainMobileContent_routeList");
-
-                $(list).get(0).options[$(list).get(0).options.length] = new Option("Select a route...", "0");
-                $.each(msg.d, function (index, item) {
-                    $(list).append($("<option />").val(item.id).text(item.name));
-                    //$(list).get(0).options[$(list).get(0).options.length] = new Option(item.name, item.id);
-                });
-                $(list).val('0');
-                checkListCookie("route", "MainMobileContent_routeList");
-            },
-            error: function () {
-                $("#MainMobileContent_routeList").text("Failed to load routes");
-            },
-            complete: function (jqXHR, textStatus) {
-                $("#routeWait").addClass("hidden");
-            }
-        });
-        $("span").remove();
-        $(".dropList").select2();
-        //$("span").remove();
-    }
-
-    function getDirections() {
-        reset();
-
-        // Clear cookies if	this is	a new selection
-        if (!initialView) {
-            $.cookie("direction", null);
-            $.cookie("stop", null);
-        }
-
-        if (settings.includeStops) {
-            $("#MainMobileContent_stopList").get(0).options.length = 0;
-        }
 
 
-        var list = $("#MainMobileContent_directionList");
-        $(list).empty();
-        $("#MainMobileContent_stopList").empty();
-        $(list).get(0).options.length = 0;
-        //$("#MainMobileContent_directionList").text("Loading	directions...");
-        $("#directionWait").removeClass("hidden");
-
-        $.ajax({
-            type: "POST",
-            url: "http://tmweb.pacebus.com/TMWebWatch/Arrivals.aspx/getDirections",
-            data: "{routeID: " + $("#MainMobileContent_routeList").val() + "}",
-            contentType: "application/json;	charset=utf-8",
-            dataType: "json",
-            success: function (msg) {
-                if (msg.d == null || msg.d.length == 0) {
-                    $("#MainMobileContent_directionList").text("No directions found");
-                    return;
-                }
-
-                $(list).get(0).options[$(list).get(0).options.length] = new Option("Select a direction...", "");
-                $.each(msg.d, function (index, item) {
-                    $(list).append($("<option />").val(item.id).text(item.name));
-                    //$(list).get(0).options[$(list).get(0).options.length] = new Option(item.name, item.id);
-                });
-
-                checkListCookie("direction", "MainMobileContent_directionList");
-
-                if (!settings.includeStops)
-                    initialView = false;
-            },
-            error: function () {
-                $("#MainMobileContent_directionList").text("Failed to load directions");
-            },
-            complete: function (jqXHR, textStatus) {
-                $("#directionWait").addClass("hidden");
-            }
-        });
-        $("span").remove();
-        $(".dropList").select2();        //$("span").remove();
-    }
-
-    function getStops() {
-        // Clear cookies if	this is	a new selection
-        if (!initialView)
-            $.cookie("stop", null);
-
-        var list = $("#MainMobileContent_stopList");
-
-        $(list).get(0).options.length = 0;
-        $("#MainMobileContent_stopList").text("Loading stops...");
-        $("#stopWait").removeClass("hidden");
-
-        $.ajax({
-            type: "POST",
-            url: "http://tmweb.pacebus.com/TMWebWatch/Arrivals.aspx/getStops",
-            data: "{routeID: " + $("#MainMobileContent_routeList").val() + ",	directionID: " + $("#MainMobileContent_directionList").val() + "}",
-            contentType: "application/json;	charset=utf-8",
-            dataType: "json",
-            success: function (msg) {
-                if (msg.d == null || msg.d.length == 0) {
-                    $("#MainMobileContent_stopList").text("No stops	found");
-                    return;
-                }
-                $(list).empty();
-                $(list).get(0).options[$(list).get(0).options.length] = new Option("Select a stop...", "");
-
-                $.each(msg.d, function (index, item) {
-                    $(list).append($("<option />").val(item.id).text(item.name));
-                    //$(list).get(0).options[$(list).get(0).options.length] = new Option(item.name, item.id);
-                });
-
-                checkListCookie("stop", "MainMobileContent_stopList");
-
-                initialView = false;
-            },
-            error: function () {
-                $("#MainMobileContent_stopList").text("Failed to load stops");
-            },
-            complete: function (jqXHR, textStatus) {
-                $("#stopWait").addClass("hidden");
-            }
-        });
-        $("span").remove();
-        $(".dropList").select2();        //$("span").remove();
-    }
-
-    function getArrivalTimes(refresh) {
-        if (!refresh) {
-            reset(true);
-            $("#stopWait").removeClass("hidden");
-        }
-
-        $.ajax({
-            type: "POST",
-            url: "http://tmweb.pacebus.com/TMWebWatch/Arrivals.aspx/getStopTimes",
-            data: "{routeID: " + $("#MainMobileContent_routeList").val() + ",	directionID: " + $("#MainMobileContent_directionList").val() + ",	stopID:	" + $("#MainMobileContent_stopList").val() + ", useArrivalTimes:	" + settings.arrivals + "}",
-            contentType: "application/json;	charset=utf-8",
-            dataType: "json",
-            success: function (msg) {
-                if (msg.d == null) {
-                    msg.d = { errorMessage: "Sorry, an	internal error has occurred" };
-                }
-
-if (msg.d.errorMessage == null && (msg.d.routeStops == null || msg.d.routeStops[0].stops == null || msg.d.routeStops[0].stops[0].crossings == null || msg.d.routeStops[0].stops[0].crossings.length == 0))
-					msg.d.errorMessage = "No upcoming stop times found";
-
-				if (msg.d.errorMessage != null)
-				{
-					displayError(msg.d.errorMessage);
-					return;
-				}
-
-				msg.d.stops = msg.d.routeStops[0].stops;
-
-				var count = msg.d.stops[0].crossings.length;
-				msg.d.heading = "Next " + (count > 1 ? count : "") + " Vehicle " + settings.headingLabel + (count > 1 ? "s" : "");
-
-				var result = $("#stopTemplate").render(msg.d);
-
-				if (refresh)
-					$("#resultBox").html($(result).html());
-				else
-					displayResultsBox(result);
-
-				if (!refresh)
-					timer = window.setInterval(function () {
-						getArrivalTimes(true);
-					}, 30000);
-			},
-			error: function () {
-				displayError("Failed to	load stop times");
-			},
-			complete: function (jqXHR, textStatus) {
-				$("#stopWait").addClass("hidden");
-			}        });
-        $("span").remove();
-        $(".dropList").select2();        //$("span").remove();
-    }
-
-    function displayError(error) {
-        reset(true);
-        displayResultsBox($("#errorTemplate").render({ error: error }));
-    }
-
-    function displayResultsBox(html) {
-        // Unfortunately IE9 leaves	artifacts
-        var radius = $("#contentBox").css("border-radius");
-
-        $(html).hide().appendTo("#contentBox").toggle(500, function () {
-            $("#contentBox").css("border-radius", radius);
-            $(this).animate({ opacity: "1" }, 200);
-        });
-    }
-
-    function reset(instantRemove) {
-        if (timer != null) {
-            window.clearInterval(timer);
-            timer = null;
-        }
-
-        if ($("#resultBox").length > 0) {
-            if (instantRemove)
-                $("#resultBox").remove();
-            else
-                removeResultBox();
-        }
-    }
-
-    function removeResultBox() {
-        // Unfortunately IE9 leaves	artifacts
-        var shadow = $("#contentBox").css("box-shadow");
-        var shadowHide = shadow;
-
-        $("#resultBox").animate({ opacity: "0" }, 200, function () {
-            $("#contentBox").css("box-shadow", shadowHide);
-            $(this).toggle(500, function () {
-                $("#contentBox").css("box-shadow", shadow);
-                $(this).remove();
-            })
-        });
-    }
 
     return {
         displayError: displayError
