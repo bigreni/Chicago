@@ -159,7 +159,7 @@ function processXmlDocumentPredictions(xml)
         var outputContainer = $('.js-next-bus-results');
 		var stopTag = xml.getElementsByTagName("stop");
 		var predsTag = stopTag[0].getElementsByTagName("pre");
-        var results = '<table id="tblResults" border="0" cellpadding="0" cellspacing="0" width="90%" height="100%">'
+        var results = '<table id="tblResults" cellpadding="0" cellspacing="0">'
 
 		if(predsTag != null)
 		{
@@ -170,7 +170,7 @@ function processXmlDocumentPredictions(xml)
 				var arrival = predsTag[i].getElementsByTagName("pt")[0].firstChild.data + " " + predsTag[i].getElementsByTagName("pu")[0].firstChild.data;
 				var route = predsTag[i].getElementsByTagName("rd")[0].firstChild.data;
 				var destination = predsTag[i].getElementsByTagName("fd")[0].firstChild.data;
-                results = results.concat("<tr>");
+                results = results.concat('<tr class="predictions">');
                 results = results.concat("<td>" + route + "</td>" + "<td>" + destination + "</td>" + "<td>" + arrival + "</td>");
 			    results = results.concat('</tr><tr><td class="spacer" colspan="3"></td></tr>');
 			}
