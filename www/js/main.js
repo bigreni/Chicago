@@ -59,12 +59,12 @@
     {
         $(".dropList").select2();
         $('#simplemenu').sidr();
-        window.ga.startTrackerWithId('UA-88579601-15', 1, function(msg) {
-            window.ga.trackView('Home');
-        });  
-        initApp();
-        askRating();
-        //document.getElementById('screen').style.display = 'none';     
+        //window.ga.startTrackerWithId('UA-88579601-15', 1, function(msg) {
+        //    window.ga.trackView('Home');
+        //});  
+        //initApp();
+        //askRating();
+        document.getElementById('screen').style.display = 'none';     
     }
 
 function askRating()
@@ -91,7 +91,7 @@ function loadFaves()
 
 function getDirections() {
     reset();
-    var url = "http://www.ctabustracker.com/bustime/map/getDirectionsStopsForRoute.jsp?route=" + $("#MainMobileContent_routeList").val();
+    var url = encodeURI("http://www.ctabustracker.com/bustime/map/getDirectionsStopsForRoute.jsp?route=" + $("#MainMobileContent_routeList").val());
 	$.get(url, function(data) {processXmlDocumentDirections(data); });    $("span").remove();
     $(".dropList").select2();
 }
@@ -119,7 +119,7 @@ function processXmlDocumentDirections(xml)
 function getStops()
 {
     reset();
-    var url = "http://www.ctabustracker.com/bustime/map/getStopsForRouteDirection.jsp?route=" + $("#MainMobileContent_routeList").val() + "&direction=" + $("#MainMobileContent_directionList").val();
+    var url = encodeURI("http://www.ctabustracker.com/bustime/map/getStopsForRouteDirection.jsp?route=" + $("#MainMobileContent_routeList").val() + "&direction=" + $("#MainMobileContent_directionList").val());
 	$.get(url, function(data) {  processXmlDocumentStops(data); });
     $("span").remove();
     $(".dropList").select2();
@@ -148,7 +148,15 @@ function processXmlDocumentStops(xml)
 
 function getArrivalTimes() {
     reset();
-    var url = "http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=" + $("#MainMobileContent_routeList").val() + "&stop=" + $("#MainMobileContent_stopList").val();
+    var allRoutes = document.getElementById('allRoutes');
+    if(allRoutes.checked)
+    {
+        var url = encodeURI("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop=" + $("#MainMobileContent_stopList").val());                
+    }
+    else
+    {
+        var url = encodeURI("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=" + $("#MainMobileContent_routeList").val() + "&stop=" + $("#MainMobileContent_stopList").val());        
+    }
 	$.get(url, function(data) {  processXmlDocumentPredictions(data); });       
     $("span").remove();
     $(".dropList").select2();
@@ -198,7 +206,15 @@ function reset() {
 function saveFavorites()
 {
     var favStop = localStorage.getItem("Favorites");
-    var newFave = $('#MainMobileContent_routeList option:selected').val() + ">" + $("#MainMobileContent_directionList option:selected").val() + ">" + $("#MainMobileContent_stopList option:selected").val() + ":" + $('#MainMobileContent_routeList option:selected').text() + " > " + $("#MainMobileContent_directionList option:selected").text() + " > " + $("#MainMobileContent_stopList option:selected").text();
+    var allRoutes = document.getElementById('allRoutes');
+    if(allRoutes.checked)
+    {
+        var newFave = "all >" + $("#MainMobileContent_directionList option:selected").val() + ">" + $("#MainMobileContent_stopList option:selected").val() + ":" + "All > " + $("#MainMobileContent_directionList option:selected").text() + " > " + $("#MainMobileContent_stopList option:selected").text();
+    }
+    else
+    {
+        var newFave = $('#MainMobileContent_routeList option:selected').val() + ">" + $("#MainMobileContent_directionList option:selected").val() + ">" + $("#MainMobileContent_stopList option:selected").val() + ":" + $('#MainMobileContent_routeList option:selected').text() + " > " + $("#MainMobileContent_directionList option:selected").text() + " > " + $("#MainMobileContent_stopList option:selected").text();
+    }
         if (favStop == null)
         {
             favStop = newFave;
