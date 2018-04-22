@@ -75,7 +75,7 @@ function askRating()
   usesUntilPrompt: 10,
   promptAgainForEachNewVersion: true,
   storeAppURL: {
-                ios: '1225698349',
+                ios: '1369778129',
                 android: 'market://details?id=com.chicago.free'
                }
 };
@@ -149,14 +149,13 @@ function processXmlDocumentStops(xml)
 function getArrivalTimes() {
     reset();
     var allRoutes = document.getElementById('allRoutes');
-    if(allRoutes.checked)
-    {
-        var url = encodeURI("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop=" + $("#MainMobileContent_stopList").val());                
+    var url = encodeURI("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=" + $("#MainMobileContent_routeList").val() + "&stop=" + $("#MainMobileContent_stopList").val());
+    if (allRoutes != null) {
+        if (allRoutes.checked) {
+            url = encodeURI("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop=" + $("#MainMobileContent_stopList").val());
+        }
     }
-    else
-    {
-        var url = encodeURI("http://www.ctabustracker.com/bustime/eta/getStopPredictionsETA.jsp?route=" + $("#MainMobileContent_routeList").val() + "&stop=" + $("#MainMobileContent_stopList").val());        
-    }
+
 	$.get(url, function(data) {  processXmlDocumentPredictions(data); });       
     $("span").remove();
     $(".dropList").select2();
@@ -207,14 +206,13 @@ function saveFavorites()
 {
     var favStop = localStorage.getItem("Favorites");
     var allRoutes = document.getElementById('allRoutes');
-    if(allRoutes.checked)
-    {
-        var newFave = "all >" + $("#MainMobileContent_directionList option:selected").val() + ">" + $("#MainMobileContent_stopList option:selected").val() + ":" + "All > " + $("#MainMobileContent_directionList option:selected").text() + " > " + $("#MainMobileContent_stopList option:selected").text();
+    var newFave = $('#MainMobileContent_routeList option:selected').val() + ">" + $("#MainMobileContent_directionList option:selected").val() + ">" + $("#MainMobileContent_stopList option:selected").val() + ":" + $('#MainMobileContent_routeList option:selected').text() + " > " + $("#MainMobileContent_directionList option:selected").text() + " > " + $("#MainMobileContent_stopList option:selected").text();
+    if (allRoutes != null) {
+        if (allRoutes.checked) {
+            newFave = "all >" + $("#MainMobileContent_directionList option:selected").val() + ">" + $("#MainMobileContent_stopList option:selected").val() + ":" + "All > " + $("#MainMobileContent_directionList option:selected").text() + " > " + $("#MainMobileContent_stopList option:selected").text();
+        }
     }
-    else
-    {
-        var newFave = $('#MainMobileContent_routeList option:selected').val() + ">" + $("#MainMobileContent_directionList option:selected").val() + ">" + $("#MainMobileContent_stopList option:selected").val() + ":" + $('#MainMobileContent_routeList option:selected').text() + " > " + $("#MainMobileContent_directionList option:selected").text() + " > " + $("#MainMobileContent_stopList option:selected").text();
-    }
+    
         if (favStop == null)
         {
             favStop = newFave;
