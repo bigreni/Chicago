@@ -5,8 +5,12 @@
 <meta name="format-detection" content="telephone=no" />
 <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
 <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-<!--<link rel="stylesheet" type="text/css" href="css/index.css" />-->
-<link rel="stylesheet" type="text/css" href="http://bigreni.com/css/chicago/index.css?v=1.0" />
+<script type="text/javascript">
+    var cachebuster = Math.round(new Date().getTime() / 1000);
+    //document.write('<link rel="stylesheet" type="text/css" href="css/index.css?cb=' +cachebuster+'"></li' + 'nk>');
+    document.write('<link rel="stylesheet" type="text/css" href="http://bigreni.com/css/chicago/index.css?cb=' +cachebuster+'"></li' + 'nk>');
+</script>
+<!--<link rel="stylesheet" type="text/css" href="http://bigreni.com/css/chicago/index.css?v=1.0" />-->
 <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
 <title>CTA Favorites</title>
 <link rel="stylesheet" href="css/jquery.sidr.dark.min.css">
@@ -15,7 +19,6 @@
 <body onload="loadFavorites();">
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript">
-        var cachebuster = Math.round(new Date().getTime() / 1000);
         document.write('<script type="text/javascript" src="http://bigreni.com/js/chicago/favorites.js?cb=' +cachebuster+'"></scr' + 'ipt>');
         //document.write('<script type="text/javascript" src="js/favorites.js?cb=' +cachebuster+'"></scr' + 'ipt>');
     </script>	
