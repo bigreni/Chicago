@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget 
 id="com.chicago.free" 
-version="1.0.3"
+version="1.0.4"
 versionCode = "4" 
 xmlns="http://www.w3.org/ns/widgets"
+xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:gap="http://phonegap.com/ns/1.0"
 >
     <name>Chicago CTA Bus Tracker</name>
@@ -48,6 +49,12 @@ xmlns:gap="http://phonegap.com/ns/1.0"
     <allow-navigation href="http://*/*" />
     <allow-navigation href="https://*/*" />
     <allow-navigation href="data:*" />
+    <platform name="android">
+    <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:usesCleartextTraffic="true" />
+    </edit-config>
+    </platform>
+    <platform name="ios" />
     <icon src="icon.png" gap:role="default" />
     <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/Icon-36.png" />
     <icon gap:platform="android" gap:qualifier="mdpi" src="res/icon/android/Icon-48.png" />
